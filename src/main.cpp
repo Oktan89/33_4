@@ -1,35 +1,46 @@
 #include <iostream>
-#include <string>
 #include <vector>
+#include <typeinfo>
 #include <type_traits>
 #include <cassert>
 
-/*
-template <typename T>
-std::size_t arithmetic_mean(T mas)
-{
-    static_assert(std::is_fundamental<T>() , "Type must be fundamental");
-    std::cout << mas << std::endl;
-    return 0;
-}
-*/
+
 
 template <typename T>
 T arithmetic_mean(const std::vector<T>& vec)
 {
-    static_assert(std::is_fundamental<T>() , "Type must be fundamental");
-    T num = 0;
+    if(vec.empty())
+        return T();
+    static_assert(sizeof(T) != 1, "The type should not be char or bool");
+    static_assert(std::is_arithmetic<T>()  , "Type must be arithmetic");
+    
+    T num = T();
+    T size = static_cast<T>(vec.size());
     for(const auto &v : vec)
     {
         num += v;
     }
-    return num / static_cast<T>(vec.size());
+    return num / size;
+}
+
+template <typename T>
+void enter_data(std::vector<T> &vec)
+{
+    T num = T();
+    std::cout << "Enter type " <<typeid(T).name() <<" for end enter 0:"<< std::endl;
+    do
+    {
+        std::cin >> num;
+        if(num != 0)
+            vec.push_back(num);
+    } while (num != 0);
+   
 }
 
 int main()
 {
-    std::vector<int> t = {1, 2, 3, 4, 5};
-
-    std::cout<< arithmetic_mean(t) << std::endl;;
-
+    std::vector<float> t;
+    
+    enter_data(t);
+    std::cout<< arithmetic_mean(t) << std::endl;
 }
